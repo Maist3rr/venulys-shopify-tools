@@ -1,0 +1,198 @@
+{% comment %}
+  Venulys FAQ – reusable Shopify Online Store 2.0 section.
+  Features: native details accordions, client-side search, category filters.
+  No third-party dependencies. Questions and answers can be edited in theme editor.
+{% endcomment %}
+
+<section id="venulys-faq-{{ section.id }}" class="vfaq" aria-labelledby="vfaq-heading-{{ section.id }}">
+  <div class="vfaq__container">
+    <header class="vfaq__header">
+      <p class="vfaq__eyebrow">VENULYS · AIDE & CONSEILS</p>
+      <h2 id="vfaq-heading-{{ section.id }}" class="vfaq__heading">{{ section.settings.title | escape }}</h2>
+      {% if section.settings.intro != blank %}<div class="vfaq__intro">{{ section.settings.intro }}</div>{% endif %}
+    </header>
+
+    <div class="vfaq__search-wrap">
+      <label class="vfaq__search-label" for="vfaq-search-{{ section.id }}">Rechercher une question</label>
+      <input id="vfaq-search-{{ section.id }}" class="vfaq__search" type="search" placeholder="Ex. livraison, taille, retour…" autocomplete="off" aria-controls="vfaq-results-{{ section.id }}">
+    </div>
+
+    <div class="vfaq__filters" role="group" aria-label="Filtrer les questions par catégorie">
+      <button type="button" class="vfaq__filter is-active" data-vfaq-filter="all" aria-pressed="true">Toutes</button>
+      <button type="button" class="vfaq__filter" data-vfaq-filter="retours" aria-pressed="false">Retours et remboursements</button>
+      <button type="button" class="vfaq__filter" data-vfaq-filter="livraison" aria-pressed="false">Livraison et commandes</button>
+      <button type="button" class="vfaq__filter" data-vfaq-filter="produits" aria-pressed="false">Nos produits</button>
+    </div>
+
+    <div id="vfaq-results-{{ section.id }}" class="vfaq__results">
+      {% assign faq_categories = 'retours,livraison,produits' | split: ',' %}
+      {% for faq_category in faq_categories %}
+        {% capture category_title %}{% case faq_category %}{% when 'retours' %}Retours et remboursements{% when 'livraison' %}Livraison et commandes{% when 'produits' %}Informations sur nos produits{% endcase %}{% endcapture %}
+        <div class="vfaq__group" data-vfaq-group="{{ faq_category }}">
+          <h3 class="vfaq__group-heading">{{ category_title | strip }}</h3>
+          {% for block in section.blocks %}
+            {% if block.type == 'question' and block.settings.category == faq_category and block.settings.question != blank %}
+              <details class="vfaq__item" data-vfaq-item {{ block.shopify_attributes }}>
+                <summary class="vfaq__question">
+                  <span>{{ block.settings.question | escape }}</span>
+                  <svg class="vfaq__chevron" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </summary>
+                <div class="vfaq__answer">{{ block.settings.answer }}</div>
+              </details>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+      <p class="vfaq__empty" data-vfaq-empty hidden>Aucune question trouvée. Essayez un autre mot-clé.</p>
+    </div>
+
+    {% if section.settings.show_contact %}
+      <aside class="vfaq__contact">
+        <div>
+          <h3>Vous avez encore une question ?</h3>
+          <p>Notre équipe est à votre écoute.</p>
+        </div>
+        <a href="mailto:contact@venulys.com" class="vfaq__contact-link">Contactez-nous <span aria-hidden="true">→</span></a>
+      </aside>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  #venulys-faq-{{ section.id }} { --vfaq-text: #282522; --vfaq-muted: #746f6b; --vfaq-border: #e7e0dc; --vfaq-accent: #866454; color: var(--vfaq-text); background: {{ section.settings.background_color }}; padding: 64px 20px 76px; font-family: inherit; }
+  #venulys-faq-{{ section.id }} .vfaq__container { max-width: 900px; margin: 0 auto; }
+  #venulys-faq-{{ section.id }} .vfaq__header { text-align: center; margin-bottom: 36px; }
+  #venulys-faq-{{ section.id }} .vfaq__eyebrow { font-size: 11px; letter-spacing: .19em; font-weight: 600; color: var(--vfaq-accent); margin: 0 0 12px; }
+  #venulys-faq-{{ section.id }} .vfaq__heading { font-size: clamp(32px,5vw,52px); line-height: 1.12; font-weight: 500; margin: 0 0 14px; }
+  #venulys-faq-{{ section.id }} .vfaq__intro { color: var(--vfaq-muted); font-size: 15px; }
+  #venulys-faq-{{ section.id }} .vfaq__intro p { margin: 0; }
+  #venulys-faq-{{ section.id }} .vfaq__search-wrap { margin: 0 auto 22px; }
+  #venulys-faq-{{ section.id }} .vfaq__search-label { display: block; font-size: 13px; margin-bottom: 9px; font-weight: 600; }
+  #venulys-faq-{{ section.id }} .vfaq__search { width: 100%; box-sizing: border-box; padding: 15px 18px; border: 1px solid var(--vfaq-border); border-radius: 9px; background: #fff; color: var(--vfaq-text); font: inherit; font-size: 15px; outline-offset: 3px; }
+  #venulys-faq-{{ section.id }} .vfaq__search:focus { border-color: var(--vfaq-accent); }
+  #venulys-faq-{{ section.id }} .vfaq__filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 34px; }
+  #venulys-faq-{{ section.id }} .vfaq__filter { appearance: none; cursor: pointer; background: transparent; border: 1px solid var(--vfaq-border); border-radius: 999px; color: var(--vfaq-text); font: inherit; font-size: 13px; padding: 10px 15px; transition: background .2s, border-color .2s, color .2s; }
+  #venulys-faq-{{ section.id }} .vfaq__filter:hover { border-color: var(--vfaq-accent); }
+  #venulys-faq-{{ section.id }} .vfaq__filter.is-active { background: var(--vfaq-text); border-color: var(--vfaq-text); color: #fff; }
+  #venulys-faq-{{ section.id }} .vfaq__filter:focus-visible, #venulys-faq-{{ section.id }} .vfaq__contact-link:focus-visible { outline: 2px solid var(--vfaq-accent); outline-offset: 3px; }
+  #venulys-faq-{{ section.id }} .vfaq__group { margin: 0 0 35px; }
+  #venulys-faq-{{ section.id }} .vfaq__group-heading { font-size: 21px; font-weight: 500; margin: 0 0 14px; }
+  #venulys-faq-{{ section.id }} .vfaq__item { border-bottom: 1px solid var(--vfaq-border); }
+  #venulys-faq-{{ section.id }} .vfaq__item:first-of-type { border-top: 1px solid var(--vfaq-border); }
+  #venulys-faq-{{ section.id }} .vfaq__question { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 21px 4px; font-size: 15px; font-weight: 600; }
+  #venulys-faq-{{ section.id }} .vfaq__question::-webkit-details-marker { display: none; }
+  #venulys-faq-{{ section.id }} .vfaq__question:focus-visible { outline: 2px solid var(--vfaq-accent); outline-offset: 2px; }
+  #venulys-faq-{{ section.id }} .vfaq__chevron { flex-shrink: 0; transition: transform .2s; }
+  #venulys-faq-{{ section.id }} .vfaq__item[open] .vfaq__chevron { transform: rotate(180deg); }
+  #venulys-faq-{{ section.id }} .vfaq__answer { padding: 0 34px 20px 4px; color: var(--vfaq-muted); line-height: 1.75; font-size: 14px; }
+  #venulys-faq-{{ section.id }} .vfaq__answer p { margin: 0 0 10px; }
+  #venulys-faq-{{ section.id }} .vfaq__answer a { color: var(--vfaq-accent); text-decoration: underline; }
+  #venulys-faq-{{ section.id }} [hidden] { display: none !important; }
+  #venulys-faq-{{ section.id }} .vfaq__empty { color: var(--vfaq-muted); padding: 28px 0; }
+  #venulys-faq-{{ section.id }} .vfaq__contact { margin-top: 45px; border: 1px solid var(--vfaq-border); padding: 25px 28px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 20px; background: rgba(255,255,255,.5); }
+  #venulys-faq-{{ section.id }} .vfaq__contact h3 { font-size: 19px; margin: 0 0 5px; font-weight: 500; }
+  #venulys-faq-{{ section.id }} .vfaq__contact p { margin: 0; color: var(--vfaq-muted); font-size: 14px; }
+  #venulys-faq-{{ section.id }} .vfaq__contact-link { white-space: nowrap; color: #fff; background: var(--vfaq-text); border-radius: 7px; text-decoration: none; padding: 13px 18px; font-size: 13px; }
+  @media (max-width: 600px) { #venulys-faq-{{ section.id }} { padding: 45px 16px 56px; } #venulys-faq-{{ section.id }} .vfaq__filters { gap: 7px; } #venulys-faq-{{ section.id }} .vfaq__filter { padding: 9px 12px; } #venulys-faq-{{ section.id }} .vfaq__contact { flex-direction: column; align-items: flex-start; } }
+  @media (prefers-reduced-motion: reduce) { #venulys-faq-{{ section.id }} .vfaq__chevron, #venulys-faq-{{ section.id }} .vfaq__filter { transition: none; } }
+</style>
+
+<script>
+(function () {
+  function initialize(root) {
+    if (!root || root.dataset.vfaqInitialized === 'true') return;
+    root.dataset.vfaqInitialized = 'true';
+    var search = root.querySelector('.vfaq__search');
+    var filters = Array.prototype.slice.call(root.querySelectorAll('[data-vfaq-filter]'));
+    var groups = Array.prototype.slice.call(root.querySelectorAll('[data-vfaq-group]'));
+    var empty = root.querySelector('[data-vfaq-empty]');
+    var activeCategory = 'all';
+
+    function normalize(value) {
+      return (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    }
+    function update() {
+      var term = normalize(search.value);
+      var totalVisible = 0;
+      groups.forEach(function (group) {
+        var categoryMatches = activeCategory === 'all' || group.dataset.vfaqGroup === activeCategory;
+        var groupVisible = 0;
+        group.querySelectorAll('[data-vfaq-item]').forEach(function (item) {
+          var matches = categoryMatches && normalize(item.textContent).indexOf(term) !== -1;
+          item.hidden = !matches;
+          if (matches) groupVisible++;
+        });
+        group.hidden = groupVisible === 0;
+        totalVisible += groupVisible;
+      });
+      empty.hidden = totalVisible !== 0;
+    }
+    search.addEventListener('input', update);
+    filters.forEach(function (button) {
+      button.addEventListener('click', function () {
+        activeCategory = button.dataset.vfaqFilter;
+        filters.forEach(function (filter) {
+          var selected = filter === button;
+          filter.classList.toggle('is-active', selected);
+          filter.setAttribute('aria-pressed', String(selected));
+        });
+        update();
+      });
+    });
+    update();
+  }
+  var id = 'venulys-faq-{{ section.id }}';
+  initialize(document.getElementById(id));
+  document.addEventListener('shopify:section:load', function (event) {
+    initialize(event.target.querySelector('#' + id) || (event.target.id === id ? event.target : null));
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Venulys FAQ interactive",
+  "tag": "section",
+  "class": "venulys-faq-section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Titre", "default": "Questions fréquentes" },
+    { "type": "richtext", "id": "intro", "label": "Introduction", "default": "<p>Trouvez rapidement les réponses à vos questions.</p>" },
+    { "type": "color", "id": "background_color", "label": "Couleur de fond", "default": "#faf8f6" },
+    { "type": "checkbox", "id": "show_contact", "label": "Afficher le contact", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question / réponse",
+      "settings": [
+        { "type": "select", "id": "category", "label": "Catégorie", "options": [
+          { "value": "retours", "label": "Retours et remboursements" },
+          { "value": "livraison", "label": "Livraison et commandes" },
+          { "value": "produits", "label": "Informations produits" }
+        ], "default": "produits" },
+        { "type": "text", "id": "question", "label": "Question", "default": "Votre question ?" },
+        { "type": "richtext", "id": "answer", "label": "Réponse", "default": "<p>Ajoutez votre réponse ici.</p>" }
+      ]
+    }
+  ],
+  "max_blocks": 40,
+  "presets": [
+    {
+      "name": "Venulys FAQ interactive",
+      "blocks": [
+        { "type": "question", "settings": { "category": "retours", "question": "Et si la taille ne me convient pas ?", "answer": "<p>Un retour peut être demandé si l’article n’a pas été porté, possède toujours ses étiquettes, reste dans son emballage d’origine et conserve sa bande de protection hygiénique intacte. Contactez contact@venulys.com avant tout envoi. Consultez notre politique de retour pour les détails.</p>" } },
+        { "type": "question", "settings": { "category": "retours", "question": "Combien de temps ai-je pour demander un retour ?", "answer": "<p>Venulys indique un délai commercial de 30 jours après la réception en Suisse, France, Belgique et Luxembourg, sous réserve des conditions d’hygiène. Les droits légaux applicables restent inchangés.</p>" } },
+        { "type": "question", "settings": { "category": "retours", "question": "Les frais de retour sont-ils à ma charge ?", "answer": "<p>En cas d’article défectueux ou d’erreur de préparation, Venulys prend les frais de retour en charge. Pour un changement de taille ou d’avis, ils sont à la charge du client, selon la politique affichée sur le site.</p>" } },
+        { "type": "question", "settings": { "category": "retours", "question": "Que faire si mon article est défectueux ?", "answer": "<p>Écrivez à contact@venulys.com avec votre numéro de commande, des photos de l’article et une description du problème. L’équipe vous indiquera les prochaines étapes.</p>" } },
+        { "type": "question", "settings": { "category": "livraison", "question": "Dans quels pays livrez-vous ?", "answer": "<p>Venulys livre actuellement en France, Suisse, Belgique et Luxembourg.</p>" } },
+        { "type": "question", "settings": { "category": "livraison", "question": "Combien coûte la livraison ?", "answer": "<p>Selon la FAQ Venulys : la livraison est gratuite en France, en Belgique et au Luxembourg, et coûte 5,90 CHF en Suisse. Des taxes ou frais de douane peuvent éventuellement s’ajouter.</p>" } },
+        { "type": "question", "settings": { "category": "livraison", "question": "Quels sont les délais de livraison ?", "answer": "<p>La livraison est estimée à 8 à 15 jours ouvrables après expédition, auxquels s’ajoutent généralement 1 à 3 jours ouvrables de préparation. Ces délais sont indicatifs.</p>" } },
+        { "type": "question", "settings": { "category": "livraison", "question": "Comment suivre ma commande ?", "answer": "<p>Après expédition, un e-mail contient votre numéro de commande et de suivi. Le suivi peut prendre 24 à 72 heures pour devenir actif.</p>" } },
+        { "type": "question", "settings": { "category": "produits", "question": "Comment choisir la bonne taille ?", "answer": "<p>Consultez le guide des tailles présent sur chaque fiche produit. Pour un conseil personnalisé, contactez contact@venulys.com.</p>" } },
+        { "type": "question", "settings": { "category": "produits", "question": "Le bodysuit est-il confortable toute la journée ?", "answer": "<p>Les bodysuits Venulys sont conçus avec un textile doux, extensible et respirant afin d’offrir du maintien sans compression excessive.</p>" } },
+        { "type": "question", "settings": { "category": "produits", "question": "Comment entretenir mon bodysuit ?", "answer": "<p>Privilégiez un lavage à la main ou en machine à basse température et évitez le sèche-linge pour préserver l’élasticité du tissu.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
